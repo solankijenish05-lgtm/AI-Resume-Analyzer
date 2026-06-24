@@ -2,6 +2,7 @@ from app.parsers import parse_resume
 from app.preprocessor import preprocess_text
 from app.heuristics import analyze_resume
 from app.matcher import calculate_match_score, find_missing_keywords
+from app.advisor import get_resume_advice
 
 import streamlit as st
 
@@ -42,6 +43,11 @@ if st.button("Analyze Resume"):
             resume_text
         )
 
+        advice = get_resume_advice(
+            resume_text,
+            job_description
+        )
+
         st.success("Analysis Complete")
 
         st.metric(
@@ -54,6 +60,10 @@ if st.button("Analyze Resume"):
 
         st.write("Missing Skills:")
         st.write(missing)
+        st.write("AI Suggestions:")
+        st.write(advice)
+        st.subheader("AI Suggestions")
+        st.info(advice)
 
     else:
 
