@@ -1,3 +1,8 @@
+from app.parsers import parse_resume
+from app.preprocessor import preprocess_text
+from app.heuristics import analyze_resume
+from app.matcher import calculate_match_score, find_missing_keywords
+
 import streamlit as st
 
 st.title("AI Resume Analyzer")
@@ -14,21 +19,47 @@ job_description = st.text_area(
 )
 
 if st.button("Analyze Resume"):
-    st.success("Analysis Started")
 
-st.metric("ATS Score", "85%")
+    if uploaded_file and job_description:
 
-tab1, tab2, tab3 = st.tabs(
-    ["ATS Score", "Missing Skills", "AI Suggestions"]
-)
+        resume_text = parse_resume(uploaded_file)
 
-with tab1:
-    st.metric("ATS Score", "85%")
+        clean_resume = preprocess_text(resume_text)
 
-with tab2:
-    st.write("Docker")
-    st.write("Machine Learning")
+        clean_job = preprocess_text(job_description)
 
-with tab3:
-    st.write("Add more projects")
-    st.write("Improve summary")
+        score = calculate_match_score(
+            clean_resume,
+            clean_job
+        )
+
+        missing = find_missing_keywords(
+            clean_resume,
+            clean_job
+        )
+
+        heuristics = analyze_resume(
+            resume_text
+        )
+
+        st.success("Analysis Complete")
+
+        st.metric(
+            "ATS Score",
+            f"{score}%"
+        )
+
+        st.write("Heuristics Result:")
+        st.write(heuristics)
+
+        st.write("Missing Skills:")
+        st.write(missing)
+
+    else:
+
+        st.warning(
+            "Upload Resume and Job Description"
+        )
+
+
+
