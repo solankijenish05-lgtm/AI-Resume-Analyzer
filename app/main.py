@@ -118,6 +118,31 @@ if st.button("Analyze Resume"):
         st.subheader("AI Suggestions")
         st.info(advice)
 
+        report = f"""
+        Candidate Name : {candidate_name}
+
+        ATS Score : {score}%
+
+        Resume Status :
+
+        {"Excellent Resume" if score >= 80 else "Good Resume" if score >= 60 else "Needs Improvement"}
+
+        Missing Skills :
+
+        {", ".join(missing)}
+
+        AI Suggestions :
+
+        {advice}        
+        """
+
+        st.download_button(
+            label="Download Report",
+            data=report,
+            file_name="Resume_Report.txt",
+            mime="text/plain"
+)
+
     else:
 
         st.warning(
