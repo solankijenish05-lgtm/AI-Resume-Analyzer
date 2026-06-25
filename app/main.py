@@ -15,6 +15,14 @@ create_database()
 
 st.title("AI Resume Analyzer")
 
+st.caption(
+    "Analyze resumes, calculate ATS score, identify missing skills and generate AI suggestions."
+)
+
+candidate_name = st.text_input(
+    "Enter Candidate Name"
+)
+
 st.write("Upload Resume and Check ATS Score")
 
 uploaded_file = st.file_uploader(
@@ -28,8 +36,12 @@ job_description = st.text_area(
 
 if st.button("Analyze Resume"):
 
-    if uploaded_file and job_description:
-
+    if (
+        candidate_name
+        and uploaded_file
+        and job_description
+    ):
+        
         resume_text = parse_resume(uploaded_file)
 
         clean_resume = preprocess_text(resume_text)
@@ -49,13 +61,30 @@ if st.button("Analyze Resume"):
         st.success("Analysis Complete")
         
         save_result(
-            "Candidate",
+            candidate_name,
             score
         )
+
+        st.divider()
+
         st.metric(
             "ATS Score",
             f"{score}%"
         )
+
+        if score >= 80:
+
+            st.success("Excellent Resume")
+
+        elif score >= 60:
+
+            st.warning("Good Resume")
+
+        else:
+
+            st.error("Needs Improvement")
+       
+       
         heuristics = analyze_resume(
             resume_text
         )
@@ -65,11 +94,26 @@ if st.button("Analyze Resume"):
             job_description
         )
 
+        st.divider()
+
         st.write("Heuristics Result:")
         st.write(heuristics)
 
-        st.write("Missing Skills:")
-        st.write(missing)
+        st.divider()
+
+        st.subheader("Missing Skills")
+
+        if missing:
+
+            for skill in missing:
+
+                st.write(f"• {skill.title()}")
+
+        else:
+
+            st.success("No Missing Skills Found")
+
+        st.divider()
 
         st.subheader("AI Suggestions")
         st.info(advice)
@@ -77,12 +121,29 @@ if st.button("Analyze Resume"):
     else:
 
         st.warning(
-            "Upload Resume and Job Description"
-        )
-            
+           "Please enter candidate name, upload resume and enter job description."
+       )
+
+        st.divider()
+
 st.subheader("Analysis History")
       
 history = get_results()
         
 for row in history:
-    st.write(row)
+
+    st.write(
+        f"Candidate Name : {row[1]}"
+    )
+
+    st.write(
+        f"ATS Score : {row[2]}%"
+    )
+
+    st.write("-----------------------------")
+
+    st.divider()
+
+    st.caption(
+        "Developed using Python, Streamlit, SQLite and NLP."
+    )
