@@ -10,6 +10,7 @@ from database.db_manager import (
 )
 
 import streamlit as st
+import pandas as pd
 
 create_database()
 
@@ -141,20 +142,20 @@ if st.button("Analyze Resume"):
             data=report,
             file_name="Resume_Report.txt",
             mime="text/plain"
-)
+        )
 
     else:
 
         st.warning(
            "Please enter candidate name, upload resume and enter job description."
        )
-
-        st.divider()
+        
+st.divider()
 
 st.subheader("Analysis History")
-      
+
 history = get_results()
-        
+
 for row in history:
 
     st.write(
@@ -167,8 +168,9 @@ for row in history:
 
     st.write("-----------------------------")
 
-    st.divider()
+st.divider()
 
-    st.caption(
-        "Developed using Python, Streamlit, SQLite and NLP."
-    )
+st.caption(
+    "Developed using Python, Streamlit, SQLite and NLP."
+)
+    
