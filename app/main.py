@@ -3,8 +3,15 @@ from app.preprocessor import preprocess_text
 from app.heuristics import analyze_resume
 from app.matcher import calculate_match_score, find_missing_keywords
 from app.advisor import get_resume_advice
+from database.db_manager import (
+    create_database,
+    save_result,
+    get_results
+)
 
 import streamlit as st
+
+create_database()
 
 st.title("AI Resume Analyzer")
 
@@ -39,6 +46,16 @@ if st.button("Analyze Resume"):
             clean_job
         )
 
+        st.success("Analysis Complete")
+        
+        save_result(
+            "Candidate",
+            score
+        )
+        st.metric(
+            "ATS Score",
+            f"{score}%"
+        )
         heuristics = analyze_resume(
             resume_text
         )
@@ -48,20 +65,12 @@ if st.button("Analyze Resume"):
             job_description
         )
 
-        st.success("Analysis Complete")
-
-        st.metric(
-            "ATS Score",
-            f"{score}%"
-        )
-
         st.write("Heuristics Result:")
         st.write(heuristics)
 
         st.write("Missing Skills:")
         st.write(missing)
-        st.write("AI Suggestions:")
-        st.write(advice)
+
         st.subheader("AI Suggestions")
         st.info(advice)
 
@@ -70,6 +79,10 @@ if st.button("Analyze Resume"):
         st.warning(
             "Upload Resume and Job Description"
         )
-
-
-
+            
+st.subheader("Analysis History")
+      
+history = get_results()
+        
+for row in history:
+    st.write(row)
